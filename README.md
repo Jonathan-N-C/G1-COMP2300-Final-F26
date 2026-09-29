@@ -2,3 +2,6 @@
 Final Project for Comp2300
 Email: Jonathan_Cabrera1@student.uml.edu
 Discord: chaorito
+
+# Tasks
+Milestone 1:
