@@ -1,14 +1,17 @@
 # import crypt
-import json
-
 attempts = 0
 
+#Registering
+print("Do you want to register a user (y/n)")
+
+
+# Existing
 for i in range(5):
     authenticated = True #signin(email, password)
 
     if authenticated:
         break
-    # failedauthetication(email, passwort)
+    # failedAuthetication(email, passwort)
 print("Welcome to SecureDrop\n")
 print("Type help for commands \n")
 
