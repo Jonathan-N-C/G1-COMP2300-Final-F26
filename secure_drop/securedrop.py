@@ -5,25 +5,25 @@ import rlcompleter      #   rlcomplete for set_completer in readline module
 
 attempts = 0
 #Registering
-print("Do you want to register a user (y/n)")
-register = input()
-match register:
-    # Registering case, when done will quit SecureDrop
-    case 'y':
-        print("Enter Full Name: ")
-        print("Enter Email Address: ")
-        print("Enter Password: ")
-        print("Re-enter Password: ")
-        exit(1)
-    #
-    case 'n':
-        print("Please login")
-        for attempts in range(5):
-            authenticated = False #signin(email, password)
-            if attempts >= 4 :
-                print("Too many attempts. Try again later.\n")
-                exit(1)
-        # failedAuthetication(email, password)
+# print("Do you want to register a user (y/n)")
+# register = input()
+# match register:
+#     # Registering case, when done will quit SecureDrop
+#     case 'y':
+#         print("Enter Full Name: ")
+#         print("Enter Email Address: ")
+#         print("Enter Password: ")
+#         print("Re-enter Password: ")
+#         exit(1)
+#     #
+#     case 'n':
+#         print("Please login")
+#         for attempts in range(5):
+#             authenticated = False #signin(email, password)
+#             if attempts >= 4 :
+#                 print("Too many attempts. Try again later.\n")
+#                 exit(1)
+#         # failedAuthetication(email, password)
 
 
 # Shell for SecureDrop
