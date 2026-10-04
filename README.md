@@ -5,3 +5,7 @@ Discord: chaorito
 
 # Tasks
 Milestone 1:
+    - JSON Data Parser
+    - New User Registration
+    - Existing user login
+    - Prepare menu

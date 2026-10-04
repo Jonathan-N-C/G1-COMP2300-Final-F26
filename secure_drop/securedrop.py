@@ -1,4 +1,4 @@
-# import crypt
+import crypt
 import cmd              #   For building shell
 import readline         #   
 import rlcompleter      #   rlcomplete for set_completer in readline module
