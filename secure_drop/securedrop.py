@@ -1,8 +1,7 @@
-import crypt
 import cmd              #   For building shell
 import readline         #   
 import rlcompleter      #   rlcomplete for set_completer in readline module
-import secure_drop.user as user     #   registration module for logging in/new users
+import user             #   registration module for logging in/new users
 
 # Shell for SecureDrop
 # do_X methods are commands to be used
@@ -57,14 +56,8 @@ register = input('Do you want to register a user (y/n) ')
 match register:
     # Registering case, when done will quit SecureDrop
     case 'y':
-        regEmail = input('Enter email: ')
-        regPwd = input('Enter password: ')
-        if (regPwd != input('Re-enter password: ')):
-          print(f"Passwords didn't match. User not registered")
-        else:
-          user.register(regEmail, regPwd)
-        exit(0)
-    #
+        user.register()
+        exit(1)
     case 'n':
         print("Please login")
         for attempts in range(5):
@@ -72,10 +65,9 @@ match register:
             if attempts >= 4 :
                 print("Too many attempts. Try again later.\n")
                 exit(1)
+            elif authenticated:
+                if __name__ == '__main__':
+                    SecureDrop().cmdloop()
     case _:
         print(f"Invalid input")
         exit(1)
-
-
-if __name__ == '__main__':
-    SecureDrop().cmdloop()

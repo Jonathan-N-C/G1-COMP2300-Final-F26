@@ -1,10 +1,1 @@
-[ 
-    {
-        "email": "test@email.com", 
-        "passwordHash": "foo"
-    },
-    {
-        "email": "anothertest@email.com",
-        "passwordHash": "Test#12"
-    }
-]
+[]
