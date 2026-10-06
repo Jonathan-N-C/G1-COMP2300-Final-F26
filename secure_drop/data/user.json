@@ -1,10 +1,10 @@
 [ 
     {
         "email": "test@email.com", 
-        "password": "test123!!"
+        "passwordHash": "foo"
     },
     {
         "email": "anothertest@email.com",
-        "password": "Test#12"
+        "passwordHash": "Test#12"
     }
 ]
