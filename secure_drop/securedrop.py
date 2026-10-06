@@ -61,11 +61,12 @@ match register:
     case 'n':
         print("Please login")
         for attempts in range(5):
-            authenticated = user.signin()
-            if attempts >= 4 :
+            if attempts >= 4:
                 print("Too many attempts. Try again later.\n")
                 exit(1)
-            elif authenticated:
+            elif not user.signin():
+                print(f"Failed sign in")
+            else:
                 if __name__ == '__main__':
                     SecureDrop().cmdloop()
                 exit(0)
