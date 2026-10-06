@@ -1,13 +1,8 @@
 import crypt
 import getpass
 import json
-import pwd
 from hmac import compare_digest as compare_hash
 user_DB = "data/user.json"
-class User:
-    def __init__(self,  email, pwdHash):
-        self.email = email
-        self.pwdHash = pwdHash
 
 def signin():
     with open(user_DB,"r") as file:
@@ -20,8 +15,6 @@ def signin():
             if passwordCheck:
                 return True    
             print(f"Incorrect Password")
-        else: 
-            print(f"Invalid Email")
     return False
 
 def register():
