@@ -1,7 +1,6 @@
 import crypt
 import getpass
 import json
-import os
 
 user_DB = "data/user.json"
 class User:
@@ -9,29 +8,36 @@ class User:
         self.email = email
         self.pwdHash = pwdHash
 
-def signin(email, password):
+def signin():
     with open("user_DB","r") as file:
         usersList = json.load(file)
-
-    passwordHash = usersList[email]
-    return
+    inEmail = input('Enter email: ')
+    if True:
+        inPwdHash = getpass.getpass('Enter password: ')
+        
+    return False
 
 def register():
     # if not os.path.exists(user_DB):
         # return False
     with open(user_DB, "r") as file:
         usersList = json.load(file)
-
+    #  Get new user's email (ensure no existing user with same email)
     regEmail = input('Enter email: ')
+    for user in usersList:
+        if user["email"] == regEmail:
+            print(f"Email is already registered!")
+            return False
+    # Set new user's password
     regPwd = getpass.getpass('Enter password: ')
     if (regPwd == getpass.getpass('Re-enter password: ')):
         passwordHash = crypt.crypt(regPwd)
-        newUser = User(regEmail, passwordHash)
-
-        usersList.append(json.dumps(newUser.__dict__))
+        usersList.append({
+            "email": regEmail,
+            "pwdHash": passwordHash
+        })
         with open(user_DB,"w") as file:
             json.dump(usersList, file, indent=4)
-        
         print("Passwords Match.\nUser Registered.")
         return True
 

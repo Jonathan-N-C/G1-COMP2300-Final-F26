@@ -50,24 +50,25 @@ class SecureDrop(cmd.Cmd):
         """Say invalid menu option to user"""
         print(f"Invalid Menu Option")
 
-attempts = 0
 #Registering
 register = input('Do you want to register a user (y/n) ')
 match register:
     # Registering case, when done will quit SecureDrop
     case 'y':
-        user.register()
-        exit(1)
+        if user.register():
+            exit(0)
+        exit (1)
     case 'n':
         print("Please login")
         for attempts in range(5):
-            authenticated = False #signin(email, password)
+            authenticated = user.signin()
             if attempts >= 4 :
                 print("Too many attempts. Try again later.\n")
                 exit(1)
             elif authenticated:
                 if __name__ == '__main__':
                     SecureDrop().cmdloop()
+                exit(0)
     case _:
         print(f"Invalid input")
         exit(1)
