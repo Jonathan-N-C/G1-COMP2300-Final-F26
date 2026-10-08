@@ -2,6 +2,7 @@ import cmd              #   For building shell
 import readline         #   
 import rlcompleter      #   rlcomplete for set_completer in readline module
 import user             #   registration module for logging in/new users
+import sys
 
 # Shell for SecureDrop
 # do_X methods are commands to be used
@@ -19,7 +20,7 @@ class SecureDrop(cmd.Cmd):
         """List all menu options"""
         print("\"add\" -> Add a new contact")
         print("\"list\" -> List all online contacts")
-        print("\"send\" -> Transfer fil to contact")
+        print("\"send\" -> Transfer file to contact")
         print("\"exit\" -> Exit SecureDrop")
 
     # Adds a new contact
@@ -50,26 +51,24 @@ class SecureDrop(cmd.Cmd):
         """Say invalid menu option to user"""
         print(f"Invalid Menu Option")
 
-#Registering
-register = input('Do you want to register a user (y/n) ')
-match register:
-    # Registering case, when done will quit SecureDrop
-    case 'y':
-        if user.register():
-            exit(0)
-        exit (1)
-    case 'n':
-        print("Please login")
-        for attempts in range(5):
-            if attempts >= 4:
-                print("Too many attempts. Try again later.\n")
-                exit(1)
-            elif not user.signin():
-                print(f"Failed sign in")
-            else:
-                if __name__ == '__main__':
-                    SecureDrop().cmdloop()
-                exit(0)
-    case _:
-        print(f"Invalid input")
-        exit(1)
+# registering
+# Startup: registration on first run, login afterward
+if not user.has_users():
+    print("No users are registered with this client.")
+    answer = input("Do you want to register a new user (y/n)? ").strip().lower()
+    if answer == 'y':
+        sys.exit(0 if user.register() else 1)
+    sys.exit(1)
+
+print("Please login")
+for attempts in range(5):
+    if attempts >= 4:
+        print("Too many attempts. Try again later.\n")
+        sys.exit(1)
+    elif not user.signin():
+        print("Failed sign in")
+    else:
+        if __name__ == '__main__':
+            SecureDrop().cmdloop()
+        sys.exit(0)
+
