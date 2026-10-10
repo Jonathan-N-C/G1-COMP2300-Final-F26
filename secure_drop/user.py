@@ -2,6 +2,7 @@ import crypt
 import getpass
 import json
 import os
+import re
 from hmac import compare_digest as compare_hash
 
 # Builds path from this file location, not current directory
@@ -40,12 +41,17 @@ def signin():
 def register():
     usersList = load_users()
     regName = input('Enter Full Name: ')
+
     #  Get new user's email (ensure no existing user with same email)
-    regEmail = input('Enter Email Address: ')
+    # regex pattern matching the email input from the user
+    emailPattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
+    while not re.match(emailPattern, regEmail := input('Enter email: ')):
+        print("Invalid Email, try again")
     for user in usersList:
         if user["email"] == regEmail:
             print(f"Email is already registered!")
             return False
+
     # Set new user's password
     regPwd = getpass.getpass('Enter Password: ')
     if (regPwd == getpass.getpass('Re-enter Password: ')):
