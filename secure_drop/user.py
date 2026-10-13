@@ -28,10 +28,10 @@ def has_users():
 
 def signin():
     usersList = load_users()
-    inEmail = input('Enter email: ')
+    inEmail = input('Enter Email Address: ').strip().lower() #spelling und lowercase
     for user in usersList:
         if user["email"] == inEmail:
-            inPassword = getpass.getpass('Enter password: ')
+            inPassword = getpass.getpass('Enter Password: ') #spelling
             passwordCheck = compare_hash(crypt.crypt(inPassword, user["pwdHash"]), user["pwdHash"])  
             if passwordCheck:
                 return True    
@@ -45,7 +45,7 @@ def register():
     #  Get new user's email (ensure no existing user with same email)
     # regex pattern matching the email input from the user
     emailPattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    while not re.match(emailPattern, regEmail := input('Enter email: ')):
+    while not re.match(emailPattern, regEmail := input('Enter Email Address: ').strip().lower()): #spelling und lowercase
         print("Invalid Email, try again")
     for user in usersList:
         if user["email"] == regEmail:
@@ -54,6 +54,9 @@ def register():
 
     # Set new user's password
     regPwd = getpass.getpass('Enter Password: ')
+    if not regPwd.strip(): #falls leeres password oder leerzeichen
+        print('Empty password. User not registered')
+        return False #ende
     if (regPwd == getpass.getpass('Re-enter Password: ')):
         passwordHash = crypt.crypt(regPwd)
         usersList.append({

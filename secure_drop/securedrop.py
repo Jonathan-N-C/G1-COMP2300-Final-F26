@@ -57,8 +57,12 @@ if not user.has_users():
     print("No users are registered with this client.")
     answer = input("Do you want to register a new user (y/n)? ").strip().lower()
     if answer == 'y':
-        sys.exit(0 if user.register() else 1)
-    sys.exit(1)
+        #ÄNDERUNG
+        success = user.register()
+        print("Exiting SecureDrop.")
+        sys.exit(0 if success else 1)
+    print("Exiting SecureDrop.")    
+    sys.exit(0) # BIS HIER
 
 print("Please login")
 for attempts in range(5):
