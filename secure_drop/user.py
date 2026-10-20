@@ -4,6 +4,8 @@ import json
 import os
 import re
 from hmac import compare_digest as compare_hash
+from Crypto.PublicKey import RSA
+from Crypto.Cipher import PKCS1_OAEP
 
 # Builds path from this file location, not current directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -58,11 +60,27 @@ def register():
         print('Empty password. User not registered')
         return False #ende
     if (regPwd == getpass.getpass('Re-enter Password: ')):
+        #create passwordHash
         passwordHash = crypt.crypt(regPwd)
+
+        # key generation
+        priv_key = RSA.generate(2048)
+        pub_key = priv_key.public_key()
+
+        # key stores
+        priv_key_file = os.path.join(BASE_DIR, "data/keys", "id_rsa")
+        with open(priv_key_file,"w") as file:
+            file.write(priv_key.export_key().decode("utf-8"))
+
+        pub_key_file = os.path.join(BASE_DIR, "data/keys", "id_rsa.pub")
+        with open(pub_key_file,"w") as file:
+            file.write(pub_key.export_key().decode("utf-8"))
+        
+        # Add user to user.json
         usersList.append({
             "fullName": regName,
             "email": regEmail,
-            "pwdHash": passwordHash
+            "pwdHash": passwordHash,
         })
         with open(user_DB,"w") as file:
             json.dump(usersList, file, indent=4)
