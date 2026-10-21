@@ -30,10 +30,10 @@ def has_users():
 
 def signin():
     usersList = load_users()
-    inEmail = input('Enter Email Address: ').strip().lower() #spelling und lowercase
+    inEmail = input('Enter Email Address: ').strip().lower() #normalize email: remove space, lowercase
     for user in usersList:
         if user["email"] == inEmail:
-            inPassword = getpass.getpass('Enter Password: ') #spelling
+            inPassword = getpass.getpass('Enter Password: ') 
             passwordCheck = compare_hash(crypt.crypt(inPassword, user["pwdHash"]), user["pwdHash"])  
             if passwordCheck:
                 return True    
@@ -47,7 +47,7 @@ def register():
     #  Get new user's email (ensure no existing user with same email)
     # regex pattern matching the email input from the user
     emailPattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
-    while not re.match(emailPattern, regEmail := input('Enter Email Address: ').strip().lower()): #spelling und lowercase
+    while not re.match(emailPattern, regEmail := input('Enter Email Address: ').strip().lower()): #normalize email: remove space, lowercase
         print("Invalid Email, try again")
     for user in usersList:
         if user["email"] == regEmail:
@@ -56,9 +56,9 @@ def register():
 
     # Set new user's password
     regPwd = getpass.getpass('Enter Password: ')
-    if not regPwd.strip(): #falls leeres password oder leerzeichen
+    if not regPwd.strip(): #reject empty or whitespace-only passwords
         print('Empty password. User not registered')
-        return False #ende
+        return False 
     if (regPwd == getpass.getpass('Re-enter Password: ')):
         #create passwordHash
         passwordHash = crypt.crypt(regPwd)
@@ -68,9 +68,10 @@ def register():
         pub_key = priv_key.public_key()
 
         # key stores
+        os.makedirs(os.path.join(BASE_DIR, "data", "keys"), exist_ok=True) #make sure data/keys exists before writing the key files 
         priv_key_file = os.path.join(BASE_DIR, "data/keys", "id_rsa")
         with open(priv_key_file,"w") as file:
-            file.write(priv_key.export_key().decode("utf-8"))
+            file.write(priv_key.export_key(passphrase=regPwd, pkcs=8, protection="scryptAndAES128-CBC").decode("utf-8")) #private key is stored encrypted with the user's password
 
         pub_key_file = os.path.join(BASE_DIR, "data/keys", "id_rsa.pub")
         with open(pub_key_file,"w") as file:
