@@ -1,1 +1,3 @@
 secure_drop/data
+secure_drop/__pycache__
+*.pyc
