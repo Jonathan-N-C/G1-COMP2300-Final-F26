@@ -63,15 +63,15 @@ if not user.has_users():
     print("Exiting SecureDrop.")    
     sys.exit(0) 
 
-print("Please login")
+
 for attempts in range(5):
-    if attempts >= 4:
-        print("Too many attempts. Try again later.\n")
-        sys.exit(1)
-    elif not user.signin():
-        print("Failed sign in")
+    if not user.signin():
+        print("Email and Password Combination Invalid.\n")
     else:
+        print("Welcome to SecureDrop.")
+        print('Type "help" For Commands.')
         if __name__ == '__main__':
             SecureDrop().cmdloop()
         sys.exit(0)
-
+print("Too many attempts. Try again later.\n")
+sys.exit(1)
