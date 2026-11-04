@@ -17,4 +17,3 @@ def addContact(contact_DB):
         json.dump(contactList, file, indent=4)
     
     return
-
