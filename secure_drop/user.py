@@ -51,25 +51,24 @@ def create_key_pair():
 def signin():
     usersList = load_users()
     inEmail = input('Enter Email Address: ').strip().lower() #normalize email: remove space, lowercase
+    inPassword = getpass.getpass('Enter Password: ') #always ask, so it doesn't reveal which emails exist
     for user in usersList:
         if user["email"] == inEmail:
-            inPassword = getpass.getpass('Enter Password: ') 
             passwordCheck = compare_hash(crypt.crypt(inPassword, user["pwdHash"]), user["pwdHash"])  
             if passwordCheck:
                 return True
-            print(f"Incorrect Password")
     return False
 
 def register():
     usersList = load_users()
     regName = input('Enter Full Name: ')
 
-    #  Get new user's email (ensure no existing user with same email)
+    # Get new user's email (ensure no existing user with same email)
     # regex pattern matching the email input from the user
     emailPattern = r"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"
     while not re.match(emailPattern,
                        regEmail := input('Enter Email Address: ').strip().lower()
-                       ): #spelling und lowercase
+                       ): #normalize email: remove space, lowercase
         print("Invalid Email, try again")
     for user in usersList:
         if user["email"] == regEmail:
