@@ -3,13 +3,8 @@ import readline         #
 import rlcompleter      #   rlcomplete for set_completer in readline module
 import user             #   registration module for logging in/new users
 import contact
+import database
 import sys
-import os
-
-# Builds path from this file location, not current directory
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-user_DB = os.path.join(BASE_DIR, "data", "user.json")
-contact_DB = os.path.join(BASE_DIR, "data", "contact.json")
 
 # Shell for SecureDrop
 # do_X methods are commands to be used
@@ -33,7 +28,7 @@ class SecureDrop(cmd.Cmd):
     # Adds a new contact
     def do_add(self, arg):
         """Add a new contact"""
-        contact.addContact(contact_DB)
+        contact.addContact(database.contact_DB)
         print("Contact Added.")
 
     # Lists all online contacts
@@ -59,11 +54,11 @@ class SecureDrop(cmd.Cmd):
 
 # registering
 # Startup: registration on first run, login afterward
-if not user.has_users():
+if not database.has_list(database.user_DB):
     print("No users are registered with this client.")
     answer = input("Do you want to register a new user (y/n)? ").strip().lower()
     if answer == 'y':
-        success = user.register(user_DB)
+        success = user.register(database.user_DB)
         print("Exiting SecureDrop.")
         sys.exit(0 if success else 1)
     print("Exiting SecureDrop.")    
@@ -71,7 +66,7 @@ if not user.has_users():
 
 
 for attempts in range(5):
-    if not user.signin(user_DB):
+    if not user.signin(database.user_DB):
         print("Email and Password Combination Invalid.\n")
     else:
         print("Welcome to SecureDrop.")
