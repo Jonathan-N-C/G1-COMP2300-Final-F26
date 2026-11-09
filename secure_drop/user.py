@@ -11,18 +11,21 @@ from Crypto.Random import get_random_bytes
 
 
 #create rsa public and private keys and save to data/keys in specified directory
-def create_key_pair(directory):
+def create_key_pair(directory, password):
      # key generation
     priv_key = RSA.generate(2048)
     pub_key = priv_key.public_key()
 
-    # key stores
-    priv_key_file = os.path.join(directory, "data/keys", "id_rsa")
-    with open(priv_key_file,"w") as file:
-        file.write(priv_key.export_key().decode("utf-8"))
+    # check if data exists
+    keys_dir = os.path.join(directory, "data", "keys")
+    os.makedirs(keys_dir, exist_ok=True)
 
-    pub_key_file = os.path.join(directory, "data/keys", "id_rsa.pub")
-    with open(pub_key_file,"w") as file:
+    # store private key and encrypt with user's password
+    with open(os.path.join(keys_dir, "id_rsa"), "w") as file:
+        file.write(priv_key.export_key(passphrase=password, pkcs=8, protection="scryptAndAES128-CBC").decode("utf-8"))
+
+    
+    with open(os.path.join(keys_dir, "id_rsa.pub"),"w") as file:
         file.write(pub_key.export_key().decode("utf-8"))
     return
 
@@ -62,7 +65,7 @@ def register(dataFile):
         #create passwordHash
         passwordHash = crypt.crypt(regPwd)
 
-        create_key_pair(database.BASE_DIR)
+        create_key_pair(database.BASE_DIR, regPwd)
         
         # Add user to user.json
         usersList.append({
