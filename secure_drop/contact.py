@@ -1,19 +1,22 @@
 import database
-import json
 
-def addContact(contact_DB):
+def addContact(contact_DB, key):
 
     contactName = input('Enter Full Name: ')
     contactEmail = input('Enter Email Address: ').strip().lower() #normalize email: remove space, lowercase
 
-    contactList = database.load_list(contact_DB)
+    try:
+        contactList = database.load_encrypted_list(contact_DB, key)
+    except (ValueError, KeyError, TypeError):
+        print("Contact list could not be verified, it may have been tampered with.")
+        return False
 
+    #drop any existing contact with this email, so the new details replace it
     contactList = [c for c in contactList if c["email"] != contactEmail]
 
     contactList.append({
             "fullName": contactName,
             "email": contactEmail,
             })
-    with open(contact_DB,"w") as file:
-        json.dump(contactList, file, indent=4)
-    
+    database.save_encrypted_list(contact_DB, key, contactList)
+    return True

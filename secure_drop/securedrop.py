@@ -29,9 +29,9 @@ class SecureDrop(cmd.Cmd):
     # Adds a new contact
     def do_add(self, arg):
         """Add a new contact"""
-        contact.addContact(database.contact_DB)
-        print("Contact Added.")
-
+        if contact.addContact(database.contact_DB, self.session["aes_key"]):
+            print("Contact Added.")
+        
     # Lists all online contacts
     def do_list(self, arg):
         """List all online contacts"""

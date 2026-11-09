@@ -1,5 +1,7 @@
 import os
 import json
+import base64
+from Crypto.Cipher import AES
 
 # Builds path from this file location, not current directory
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -25,3 +27,27 @@ def load_list(dataFile):
 def has_list(dataFile):
     # return true if this client already has users registered
     return len(load_list(dataFile)) > 0
+
+#load a list that is stored encrypted with AES-GCM, empty list if there is no file
+def load_encrypted_list(dataFile, key):
+    if not os.path.exists(dataFile):
+        return[]
+    with open(dataFile, "r") as file:
+        stored = json.load(file)
+    cipher = AES.new(key, AES.MODE_GCM, nonce=base64.b64decode(stored["nonce"]))
+    # raises ValueError if the file was changed or the key is wrong
+    plaintext = cipher.decrypt_and_verify(base64.b64decode(stored["ciphertext"]), base64.b64decode(stored["tag"]))
+    return json.loads(plaintext)
+
+#save a list encrypted with AES-GCM (confidentiality and integrity)
+def save_encrypted_list(dataFile, key, data):
+    os.makedirs(os.path.dirname(dataFile), exist_ok=True)
+    cipher = AES.new(key, AES.MODE_GCM) # new random nonce every time
+    ciphertext, tag = cipher.encrypt_and_digest(json.dumps(data).encode())
+    stored = {
+        "nonce": base64.b64encode(cipher.nonce).decode(),
+        "tag": base64.b64encode(tag).decode(),
+        "ciphertext": base64.b64encode(ciphertext).decode(),
+    }
+    with open(dataFile, "w") as file:
+        json.dump(stored, file, indent=4)
