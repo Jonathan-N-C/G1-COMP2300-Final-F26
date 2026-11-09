@@ -4,10 +4,12 @@ import json
 import os
 import re
 import database
+import base64
 from hmac import compare_digest as compare_hash
 from Crypto.PublicKey import RSA
 from Crypto.Cipher import AES, PKCS1_OAEP
 from Crypto.Random import get_random_bytes
+from Crypto.Protocol.KDF import scrypt
 
 
 #create rsa public and private keys and save to data/keys in specified directory
@@ -29,6 +31,19 @@ def create_key_pair(directory, password):
         file.write(pub_key.export_key().decode("utf-8"))
     return
 
+#unlock private key after successful login and derive the AES key
+def load_session(user, password):
+    # the private key is stored encrypted, the password unlocks it
+    keys_dir = os.path.join(database.BASE_DIR, "data", "keys")
+    with open(os.path.join(keys_dir, "id_rsa"), "r") as file:
+        priv_key = RSA.import_key(file.read(), passphrase=password)
+
+    # same password and same salt give the same AES key
+    salt = base64.b64decode(user["kdfSalt"])
+    aes_key = scrypt(password, salt, key_len=32, N=2**14, r=8, p=1)
+
+    return {"email": user["email"], "piv_key": priv_key, "aes_key": aes_key}
+
 def signin(dataFile):
     usersList = database.load_list(dataFile)
     inEmail = input('Enter Email Address: ').strip().lower() #normalize email: remove space, lowercase
@@ -37,8 +52,8 @@ def signin(dataFile):
         if user["email"] == inEmail:
             passwordCheck = compare_hash(crypt.crypt(inPassword, user["pwdHash"]), user["pwdHash"])  
             if passwordCheck:
-                return True
-    return False
+                return load_session(user, inPassword)
+    return None
 
 def register(dataFile):
     usersList = database.load_list(dataFile)
@@ -64,6 +79,8 @@ def register(dataFile):
     if (regPwd == getpass.getpass('Re-enter Password: ')):
         #create passwordHash
         passwordHash = crypt.crypt(regPwd)
+        #random salt which is used at login to derive the AES key from the password
+        kdfSalt = get_random_bytes(16)
 
         create_key_pair(database.BASE_DIR, regPwd)
         
@@ -72,6 +89,7 @@ def register(dataFile):
             "fullName": regName,
             "email": regEmail,
             "pwdHash": passwordHash,
+            "kdfSalt": base64.b64encode(kdfSalt).decode(),
         })
         with open(dataFile,"w") as file:
             json.dump(usersList, file, indent=4)

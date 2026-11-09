@@ -13,8 +13,9 @@ class SecureDrop(cmd.Cmd):
     prompt = "secure_drop> "
 
     # Constructs a basic shell
-    def __init__(self):
+    def __init__(self, session):
         super().__init__()
+        self.session = session
         readline.set_completer(rlcompleter.Completer(self.__dict__).complete)
 
     # Display all commands and descriptions
@@ -45,6 +46,7 @@ class SecureDrop(cmd.Cmd):
     def do_exit(self, arg):
         """Exit the shell"""
         print(f"Exiting...")
+        self.session = None # forget the keys before quitting
         return True
 
     # Catches all unknown inputs
@@ -66,13 +68,14 @@ if not database.has_list(database.user_DB):
 
 
 for attempts in range(5):
-    if not user.signin(database.user_DB):
+    session = user.signin(database.user_DB)
+    if session is None:
         print("Email and Password Combination Invalid.\n")
     else:
         print("Welcome to SecureDrop.")
         print('Type "help" For Commands.')
         if __name__ == '__main__':
-            SecureDrop().cmdloop()
+            SecureDrop(session).cmdloop()
         sys.exit(0)
 print("Too many attempts. Try again later.\n")
 sys.exit(1)
