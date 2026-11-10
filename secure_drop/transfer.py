@@ -1,8 +1,8 @@
 from Crypto.Cipher import AES, PKCS1_OAEP
 from os import urandom
 
-# sends file to an online mutual contact
-def sendFile(receiver, dataFile):
+# encrypts file to send to an online mutual contact
+def encryptFile(receiver, dataFile):
     # get recipient id_rsa.pub
     
     # decrypt id_rsa.pub
