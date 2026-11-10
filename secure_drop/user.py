@@ -7,7 +7,6 @@ import database
 import base64
 from hmac import compare_digest as compare_hash
 from Crypto.PublicKey import RSA
-from Crypto.Cipher import AES, PKCS1_OAEP
 from Crypto.Random import get_random_bytes
 from Crypto.Protocol.KDF import scrypt
 
@@ -20,13 +19,13 @@ def create_key_pair(directory, password):
 
     # check if data exists
     keys_dir = os.path.join(directory, "data", "keys")
-    os.makedirs(keys_dir, exist_ok=True)
+    os.makedirs(keys_dir, exist_ok =True)
 
     # store private key and encrypt with user's password
     with open(os.path.join(keys_dir, "id_rsa"), "w") as file:
         file.write(priv_key.export_key(passphrase=password, pkcs=8, protection="scryptAndAES128-CBC").decode("utf-8"))
 
-    
+    # store public key
     with open(os.path.join(keys_dir, "id_rsa.pub"),"w") as file:
         file.write(pub_key.export_key().decode("utf-8"))
     return
@@ -44,6 +43,7 @@ def load_session(user, password):
 
     return {"email": user["email"], "piv_key": priv_key, "aes_key": aes_key}
 
+# signin to user stored in dataFile
 def signin(dataFile):
     usersList = database.load_list(dataFile)
     inEmail = input('Enter Email Address: ').strip().lower() #normalize email: remove space, lowercase
@@ -55,6 +55,7 @@ def signin(dataFile):
                 return load_session(user, inPassword)
     return None
 
+# register a new user and save information to dataFile
 def register(dataFile):
     usersList = database.load_list(dataFile)
     regName = input('Enter Full Name: ')

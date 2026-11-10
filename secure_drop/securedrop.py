@@ -59,14 +59,16 @@ class SecureDrop(cmd.Cmd):
 if not database.has_list(database.user_DB):
     print("No users are registered with this client.")
     answer = input("Do you want to register a new user (y/n)? ").strip().lower()
+    # register and exit program
     if answer == 'y':
         success = user.register(database.user_DB)
         print("Exiting SecureDrop.")
         sys.exit(0 if success else 1)
+    # Exit if no registration
     print("Exiting SecureDrop.")    
     sys.exit(0) 
 
-
+# 5 signin attempts 
 for attempts in range(5):
     session = user.signin(database.user_DB)
     if session is None:
