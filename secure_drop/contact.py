@@ -20,3 +20,13 @@ def addContact(contact_DB, key):
             })
     database.save_encrypted_list(contact_DB, key, contactList)
     return True
+
+# check the (encrypted) contact list for an email
+# used when another client asks "have you added me?"
+def isContact(contact_DB, key, email):
+    try:
+        contactList = database.load_encrypted_list(contact_DB, key)
+    except (ValueError, KeyError, TypeError):
+        return False
+    email = email.strip().lower()
+    return any(c["email"] == email for c in contactList)

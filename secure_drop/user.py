@@ -41,7 +41,7 @@ def load_session(user, password):
     salt = base64.b64decode(user["kdfSalt"])
     aes_key = scrypt(password, salt, key_len=32, N=2**14, r=8, p=1)
 
-    return {"email": user["email"], "piv_key": priv_key, "aes_key": aes_key}
+    return {"email": user["email"], "priv_key": priv_key, "aes_key": aes_key}
 
 # signin to user stored in dataFile
 def signin(dataFile):
