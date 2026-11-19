@@ -5,6 +5,7 @@ import user             #   registration module for logging in/new users
 import contact
 import database
 import sys
+import network          # for listener
 
 # Shell for SecureDrop
 # do_X methods are commands to be used
@@ -32,10 +33,24 @@ class SecureDrop(cmd.Cmd):
         if contact.addContact(database.contact_DB, self.session["aes_key"]):
             print("Contact Added.")
         
-    # Lists all online contacts
+    # Lists contacts that are online
     def do_list(self, arg):
-        """List all online contacts"""
-        print(f"List")
+        """Lists Contacts that are online"""
+        try:
+            contacts = database.load_encrypted_list(database.contact_DB, self.session["aes_key"])
+        except (ValueError, KeyError, TypeError):
+            print("Contact list could not be verified, it may have been tampered with.")
+            return
+
+        online = network.discover(self.session["email"])
+
+        found = [c for c in contacts if c["email"] in online]
+        if not found:
+            print("No contacts are online.")
+            return
+        print("The following contacts are online:")
+        for c in found:
+            print(f"* {c['fullName']} <{c['email']}>")
 
     # Lists all online contacts
     def do_send(self, arg):
@@ -75,6 +90,7 @@ for attempts in range(5):
         print("Welcome to SecureDrop.")
         print('Type "help" For Commands.')
         if __name__ == '__main__':
+            network.start_listener(session["email"])
             SecureDrop(session).cmdloop()
         sys.exit(0)
 print("Too many attempts. Try again later.\n")

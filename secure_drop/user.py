@@ -42,7 +42,7 @@ def load_session(user, password):
     salt = base64.b64decode(user["kdfSalt"])
     aes_key = scrypt(password, salt, key_len=32, N=2**14, r=8, p=1)
 
-    return {"email": user["email"], "piv_key": priv_key, "aes_key": aes_key}
+    return {"email": user["email"], "priv_key": priv_key, "aes_key": aes_key}
 
 def signin(dataFile):
     usersList = database.load_list(dataFile)
@@ -93,6 +93,7 @@ def register(dataFile):
         })
         with open(dataFile,"w") as file:
             json.dump(usersList, file, indent=4)
+        os.chmod(dataFile, 0o600) # only the owner can read the password hashes    
         print("Passwords Match.\nUser Registered.")
         return True
 
