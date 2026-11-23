@@ -94,6 +94,7 @@ def register(dataFile):
         })
         with open(dataFile,"w") as file:
             json.dump(usersList, file, indent=4)
+        os.chmod(dataFile, 0o600) # only the owner can read the password hashes    
         print("Passwords Match.\nUser Registered.")
         return True
 
