@@ -1,3 +1,4 @@
 secure_drop/data
 secure_drop/__pycache__
 *.pyc
+secure_drop/ca/ca_key.pem

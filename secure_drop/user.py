@@ -1,3 +1,4 @@
+import auth
 import crypt
 import getpass
 import json
@@ -28,7 +29,7 @@ def create_key_pair(directory, password):
     # store public key
     with open(os.path.join(keys_dir, "id_rsa.pub"),"w") as file:
         file.write(pub_key.export_key().decode("utf-8"))
-    return
+    return pub_key.export_key().decode("utf-8")
 
 #unlock private key after successful login and derive the AES key
 def load_session(user, password):
@@ -83,7 +84,11 @@ def register(dataFile):
         #random salt which is used at login to derive the AES key from the password
         kdfSalt = get_random_bytes(16)
 
-        create_key_pair(database.BASE_DIR, regPwd)
+        pub_pem = create_key_pair(database.BASE_DIR, regPwd)
+        #certificate from CA: proves this public key belongs to this email
+        cert = auth.create_certificate(regEmail, pub_pem)
+        with open(os.path.join(database.BASE_DIR, "data", "keys", "cert.json"), "w") as file:
+            json.dump(cert, file, indent=4)
         
         # Add user to user.json
         usersList.append({
